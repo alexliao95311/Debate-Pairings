@@ -1,5 +1,7 @@
 import random
 
+judges = ["Alex", "Daniel", "Kshitij", "Neel", "Felix", "Surya"]
+
 def get_team_codes(num_teams):
     teams = []
     for i in range(num_teams):
@@ -14,8 +16,8 @@ def get_team_codes(num_teams):
     return teams
 
 def record_match_results(pairings):
-    for team1, team2 in pairings:
-        result = input(f"Enter result for match {team1['code']} vs {team2['code']} (W for {team1['code']}, L for {team2['code']}): ").upper()
+    for (team1, team2), judge in pairings:
+        result = input(f"Enter result for match {team1['code']} vs {team2['code']} judged by {judge} (W for {team1['code']}, L for {team2['code']}): ").upper()
         if result == 'W':
             team1['wins'] += 1
             team2['losses'] += 1
@@ -40,11 +42,13 @@ def pair_teams(teams):
             print("All teams have had a bye, no bye will be given this round.")
 
     pairings = []
+    judge_index = 0
     while sorted_teams:
         team1 = sorted_teams.pop(0)
         for team2 in sorted_teams:
             if team2['code'] not in team1['past_opponents']:
-                pairings.append((team1, team2))
+                pairings.append(((team1, team2), judges[judge_index % len(judges)]))
+                judge_index += 1
                 team1['past_opponents'].append(team2['code'])
                 team2['past_opponents'].append(team1['code'])
                 sorted_teams.remove(team2)
@@ -54,8 +58,8 @@ def pair_teams(teams):
 
 def print_pairings(pairings):
     print("This round's pairings:")
-    for team1, team2 in pairings:
-        print(f"Match: {team1['code']} vs {team2['code']}")
+    for (team1, team2), judge in pairings:
+        print(f"Match: {team1['code']} vs {team2['code']} judged by {judge}")
 
 def print_round_results(teams):
     print("\nRound results:")
